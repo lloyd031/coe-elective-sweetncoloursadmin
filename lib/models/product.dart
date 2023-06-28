@@ -1,9 +1,9 @@
 class Products{
-  final String? name;
-  final String? price;
-  final String? description;
-   final String? details;
-  final String? image;
+  final String name;
+  final String price;
+  final String description;
+   final String details;
+  final String image;
   Products(this.name,this.price,this.description,this.details,this.image,);
   
 }
@@ -22,4 +22,18 @@ class Orders
   final String? customerId;
   final String? orderId;
   Orders(this.customerId,this.orderId);
+}
+class OrderModel{
+  final String  time;
+  final String total;
+  final String loc;
+  OrderModel(this.time,this.total,this.loc);
+}
+class OrderItemsModel{
+  final String id;
+  final String loc;
+  final String status;
+  final String  time;
+  final String total;
+  OrderItemsModel(this.id,this.loc,this.status,this.time,this.total);
 }

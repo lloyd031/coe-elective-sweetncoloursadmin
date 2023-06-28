@@ -101,4 +101,24 @@ class DatabaseService
     Stream<List<Orders>> get getPendingOrders{
         return orders.snapshots().map(_pendingOrderctListFromSnapShot);
       }
+  
+}
+class FetchOrderFromCustomer
+{
+  final String? uid;
+  final String? orderId;
+  FetchOrderFromCustomer(this.orderId,this.uid);
+  final CollectionReference order =FirebaseFirestore.instance.collection('order');
+    OrderModel? _orderListFromCartSnapShot(DocumentSnapshot snapshot)
+  {
+    
+      return OrderModel(snapshot.get('time'),snapshot.get('total'),snapshot.get('loc'));
+  
+  }
+      //get order stream
+  
+  Stream<OrderModel?> get getOrders{
+    return order.doc(uid).collection("order").doc(orderId).snapshots().map(_orderListFromCartSnapShot);
+  }
+ 
 }

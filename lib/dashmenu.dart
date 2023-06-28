@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sweetncoloursadmin/models/product.dart';
 import 'package:sweetncoloursadmin/models/user.dart';
+import 'package:sweetncoloursadmin/pendingoreder.dart';
 import 'package:sweetncoloursadmin/services/database.dart';
 
 class DashMenu extends StatefulWidget {
@@ -75,7 +76,7 @@ class _DashMenuState extends State<DashMenu> {
                   child:const ProductsCount()): StreamProvider<List<Orders>?>.value(
                   value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
                   initialData: null,
-                  child:const PendingOrdersCount()),
+                  child: PendingOrdersCount(darkFont:false)),
             
               )
               //Text(buttonLabel[widget.index],style:TextStyle(color:Colors.white,fontSize: 14,fontWeight:FontWeight.bold)),
@@ -89,16 +90,7 @@ class _DashMenuState extends State<DashMenu> {
     );
   }
 }
-class PendingOrdersCount extends StatelessWidget {
-  const PendingOrdersCount({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final pendingorder = Provider.of<List<Orders>?>(context);
-    
-    return Text("${(pendingorder==null)?0:pendingorder.length}",style:const TextStyle(color:Colors.white,fontSize: 16,fontWeight:FontWeight.bold));
-  }
-}
 class ProductsCount extends StatelessWidget {
   const ProductsCount({super.key});
 

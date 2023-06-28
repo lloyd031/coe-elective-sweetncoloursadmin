@@ -26,6 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
   // ignore: non_constant_identifier_names
   String? cat_title="All";
   String? selectedCAtegory="All";
+  bool showOrders=false;
+  void showOrderDetails()
+  {
+    setState(() {
+      showOrders=true;
+    });
+  }
   void setCatTitle(String? cat)
   {
     setState(() {
@@ -85,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
             UserData? userData=snapshot.data;
             if(userData?.accType=="admin")
             {
-              return Scaffold(
+              return (showOrders==true)?Text("Orders"):Scaffold(
           //Color.fromRGBO(215,15,100, 1)
            backgroundColor:Colors.white,
           drawer:const MyDrawer(),
@@ -141,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: (showWidgets[2]==true)?StreamProvider<List<Orders>?>.value(
                   value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
                   initialData: null,
-                  child:const OrdersPanel()):Column(
+                  child: OrdersPanel(showOrderDetails: showOrderDetails)):Column(
                   children: [
                     const SizedBox(height: 10,),
                     StreamProvider<List<CategoryModel>?>.value(

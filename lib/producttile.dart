@@ -15,8 +15,8 @@ class ProductTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserObj?>(context);
     return  Container(
-          decoration: const BoxDecoration(
-             
+          decoration:  BoxDecoration(
+            
             borderRadius: BorderRadius.all(Radius.circular(3.0)),
             boxShadow: [
                   BoxShadow(
@@ -57,7 +57,7 @@ class ProductTile extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Text("₱ ${prod?.price}", style: const TextStyle(color:Color.fromRGBO(132,90,254,1),),),
+                      Text("₱ ${(prod==null)?0:double.parse(prod!.price).toStringAsFixed(2)}", style: const TextStyle(color:Color.fromRGBO(132,90,254,1),),),
                       (isHome==false)?IconButton(onPressed: ()async{
                                  dynamic result=await DatabaseService(null,null,cat_title).updateProductData("${user?.uid}", "${prod?.name}");
                                     if(result!=null)
@@ -65,17 +65,7 @@ class ProductTile extends StatelessWidget {
                                     }
                         }, icon:const Icon(Icons.add_rounded, color: Color.fromRGBO(215,15,100, 1),size: 18, ),)
                         :IconButton(onPressed: ()async{
-                                  /*setState()
-                                  {
-                                    loading=true;
-                                  };
-                                 dynamic result=await DatabaseService(null,null,cat_title).updateProductData("${user?.uid}", "${prod?.name}");
-                                    if(result!=null)
-                                    {
-                                      setState(){
-                                        loading=false;
-                                      }
-                                    }*/
+                                  
                         }, icon:Icon(Icons.visibility, color:Colors.grey[700],size: 18, ),),
                     ],
                   )
