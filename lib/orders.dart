@@ -8,7 +8,8 @@ import 'package:sweetncoloursadmin/services/database.dart';
 
 class OrdersPanel extends StatefulWidget {
   final Function showOrderDetails;
-  const OrdersPanel({super.key,required this.showOrderDetails});
+  final Function getOrderDetails;
+  const OrdersPanel({super.key,required this.showOrderDetails, required this.getOrderDetails});
 
   @override
   State<OrdersPanel> createState() => _OrdersPanelState();
@@ -55,7 +56,7 @@ class _OrdersPanelState extends State<OrdersPanel> {
             itemCount: (order==null)? 0: order.length,
             itemBuilder: (_,index) 
             {
-              return OrderTile(order:order?[index],showOrderDetails:widget.showOrderDetails);
+              return OrderTile(order:order?[index],showOrderDetails:widget.showOrderDetails,getOrderDetails:widget.getOrderDetails);
             }
             
           ),
@@ -67,8 +68,9 @@ class _OrdersPanelState extends State<OrdersPanel> {
   }
   class OrderTile extends StatefulWidget {
     final Orders? order;
+    final Function getOrderDetails;
     final Function showOrderDetails;
-  const OrderTile({super.key, required this.order,required this.showOrderDetails});
+  const OrderTile({super.key, required this.order,required this.showOrderDetails, required this.getOrderDetails});
 
   @override
   State<OrderTile> createState() => _OrderTileState();
@@ -79,7 +81,9 @@ class _OrderTileState extends State<OrderTile> {
   Widget build(BuildContext context) {
     
     return  InkWell(
-      onTap:(){widget.showOrderDetails();},
+      onTap:(){widget.showOrderDetails();
+      widget.getOrderDetails(widget.order?.orderId, widget.order?.customerId);
+      },
       child: SizedBox(
           width:double.maxFinite,
           child: Column(

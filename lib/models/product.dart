@@ -7,6 +7,15 @@ class Products{
   Products(this.name,this.price,this.description,this.details,this.image,);
   
 }
+class OrderedProducts{
+  final String name;
+  final String price;
+  final String image;
+  final String qty;
+ OrderedProducts(this.name,this.price,this.image,this.qty);
+  
+}
+
 class CategoryModel{
   final String? title;
   CategoryModel(this.title);
@@ -29,7 +38,9 @@ class OrderModel{
   final String loc;
   OrderModel(this.time,this.total,this.loc);
 }
-class OrderItemsModel{
+/**
+ * 
+ * class OrderItemsModel{
   final String id;
   final String loc;
   final String status;
@@ -37,3 +48,4 @@ class OrderItemsModel{
   final String total;
   OrderItemsModel(this.id,this.loc,this.status,this.time,this.total);
 }
+ */

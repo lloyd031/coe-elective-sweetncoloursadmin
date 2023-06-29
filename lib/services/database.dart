@@ -120,5 +120,19 @@ class FetchOrderFromCustomer
   Stream<OrderModel?> get getOrders{
     return order.doc(uid).collection("order").doc(orderId).snapshots().map(_orderListFromCartSnapShot);
   }
- 
+
+
+  
+ List<OrderedProducts> _pendingOrderItemtListFromSnapShot(QuerySnapshot snapshot)
+  {
+    return snapshot.docs.map((doc){
+      //this.name,this.price,this.description,this.details,this.image,this.qty
+      return OrderedProducts(doc.get("name"),doc.get("price"),doc.get("image"),doc.get("quantity"));
+    }).toList();
+  }
+    //get pendiing orders
+
+    Stream<List<OrderedProducts>> get getOrdersItem{
+        return order.doc(uid).collection("order").doc(orderId).collection("products").snapshots().map(_pendingOrderItemtListFromSnapShot);
+      }
 }
