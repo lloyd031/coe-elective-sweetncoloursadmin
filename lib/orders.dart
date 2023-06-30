@@ -7,9 +7,8 @@ import 'package:sweetncoloursadmin/pendingoreder.dart';
 import 'package:sweetncoloursadmin/services/database.dart';
 
 class OrdersPanel extends StatefulWidget {
-  final Function showOrderDetails;
-  final Function getOrderDetails;
-  const OrdersPanel({super.key,required this.showOrderDetails, required this.getOrderDetails});
+   final String status;
+  const OrdersPanel({super.key, required this.status});
 
   @override
   State<OrdersPanel> createState() => _OrdersPanelState();
@@ -45,21 +44,20 @@ class _OrdersPanelState extends State<OrdersPanel> {
                       )
                   ]
                 ),
+            Container(
+              child:(order==null)?Text(""):Column(
+                children: [
+                  for(int i=0; i<order.length; i++)
+                  StreamProvider<OrderModel?>.value(
+                            value:FetchOrderFromCustomer(order[i].orderId,order[i].customerId).getOrders,
+                            initialData: null,
+                            child:OrderTile(status:widget.status),),
+              
+                ],
+              ),
+            ),
             
-          GridView.builder(
-            physics:  const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            gridDelegate:  const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1, 
-            crossAxisSpacing:12,
-            mainAxisSpacing: 12,
-            mainAxisExtent:150),
-            itemCount: (order==null)? 0: order.length,
-            itemBuilder: (_,index) 
-            {
-              return OrderTile(order:order?[index],showOrderDetails:widget.showOrderDetails,getOrderDetails:widget.getOrderDetails);
-            }
-            
-          ),
+          
         ],
       ),
     );
@@ -67,10 +65,8 @@ class _OrdersPanelState extends State<OrdersPanel> {
     
   }
   class OrderTile extends StatefulWidget {
-    final Orders? order;
-    final Function getOrderDetails;
-    final Function showOrderDetails;
-  const OrderTile({super.key, required this.order,required this.showOrderDetails, required this.getOrderDetails});
+  final String status;
+  const OrderTile({super.key,required this.status});
 
   @override
   State<OrderTile> createState() => _OrderTileState();
@@ -78,109 +74,163 @@ class _OrdersPanelState extends State<OrdersPanel> {
 
 class _OrderTileState extends State<OrderTile> {
   @override
+  
   Widget build(BuildContext context) {
-    
-    return  InkWell(
-      onTap:(){widget.showOrderDetails();
-      widget.getOrderDetails(widget.order?.orderId, widget.order?.customerId);
+    final order= Provider.of<OrderModel?>(context);
+    return   InkWell(
+      onDoubleTap: ()async{
+        if(widget.status=="pending")
+        {
+          dynamic update=await FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid).updateOrderStatus("approved");
+        if(update == null)
+        {
+          print("approved");
+        }
+        }
       },
-      child: SizedBox(
-          width:double.maxFinite,
-          child: Column(
-            mainAxisSize:MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              
-              const SizedBox(
-                height: 16,
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(top:Radius.circular(8)),
-                gradient:LinearGradient(
-                  begin: Alignment.bottomLeft,
-                  end:Alignment.topRight,
-                  colors:[Color.fromRGBO(132,90,254,1),
-              Color.fromRGBO(174,46,255,1),],
-                ),
-              
-              ),
+      child:(order?.status!="${widget.status}")?Text(""): SizedBox(
+            width:double.maxFinite,
+            child: Column(
+              mainAxisSize:MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 
-                child: Row(
-                  mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                  children: [
-                    StreamProvider<UserData?>.value(
-                    value:DatabaseService(widget.order?.customerId, null,"").userData,
-                    initialData: null,
-                    child:const CustomerModel())
-                    ,
-                    const Row(
-                      children: [
-                        Icon(FontAwesomeIcons.calendarDay,color:Color.fromRGBO(239,201,255,1),size:14),
-                          SizedBox(
-                              width: 8,
-                            ),
-                        Text("July 4, 2023",style:TextStyle(color:Color.fromRGBO(239,201,255,1),fontSize: 12)),
-                      ],
-                    ),
-                  ],
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12),
-                  borderRadius: BorderRadius.vertical(bottom:Radius.circular(8)),
-                ),
-                padding:const EdgeInsets.all(8),
-                child:  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children:[
-                          const Text("Total",style:TextStyle(color:Color.fromARGB(224, 27, 26, 26),fontSize: 12)),
-                          
-                          StreamProvider<OrderModel?>.value(
-                          value:FetchOrderFromCustomer(widget.order?.orderId,widget.order?.customerId).getOrders,
-                          initialData: null,
-                          child:const OrderModelValue(val:"total")),
-                           
-                        ]
-                      ),
-                      const Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children:[
-                          const Text("Location",style:TextStyle(color:Color.fromARGB(224, 27, 26, 26),fontSize: 12)),
-                          
-                          StreamProvider<OrderModel?>.value(
-                          value:FetchOrderFromCustomer(widget.order?.orderId,widget.order?.customerId).getOrders,
-                          initialData: null,
-                          child:const OrderModelValue(val:"loc")),
-                           
-                        ]
-                      ),
-                      const Divider(),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children:[
-                          Text("Tap to view",style:TextStyle(color:Color.fromARGB(224, 27, 26, 26),fontSize: 12)),
-                          
-                         
-                        ]
-                      ),
-                       
-                    ],
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.vertical(top:Radius.circular(8)),
+                  gradient:LinearGradient(
+                    begin: Alignment.bottomLeft,
+                    end:Alignment.topRight,
+                    colors:[Color.fromRGBO(132,90,254,1),
+                Color.fromRGBO(174,46,255,1),],
                   ),
                 
-              ),
-            ],
+                ),
+                  
+                  child: Row(
+                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                    children: [
+                      StreamProvider<UserData?>.value(
+                      value:DatabaseService(order?.uid, null,"").userData,
+                      initialData: null,
+                      child:const CustomerModel())
+                      ,
+                       Row(
+                        children: [
+                          Icon(("${widget.status}"=="approved")?FontAwesomeIcons.calendar:FontAwesomeIcons.xmark,color:Color.fromRGBO(239,201,255,1),size:14),
+                            SizedBox(
+                                width: 8,
+                              ),
+                          Text(("${widget.status}"=="approved")?"${order?.time}":"",style:TextStyle(color:Color.fromRGBO(239,201,255,1),) ,),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black12),
+                    borderRadius: BorderRadius.vertical(bottom:Radius.circular(8)),
+                  ),
+                  padding:const EdgeInsets.all(8),
+                  child:  Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:[
+                            const Text("Total",style:TextStyle(color:Color.fromARGB(224, 27, 26, 26),fontSize: 12)),
+                            
+                            Text("P ${order?.total}"),
+                             
+                          ]
+                        ),
+                        /*const Divider(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:[
+                            const Text("Location",style:TextStyle(color:Color.fromARGB(224, 27, 26, 26),fontSize: 12)),
+                            
+                            StreamProvider<OrderModel?>.value(
+                            value:FetchOrderFromCustomer(widget.order?.orderId,widget.order?.customerId).getOrders,
+                            initialData: null,
+                            child:const OrderModelValue(val:"loc")),
+                             
+                          ]
+                        ),*/
+                        const Divider(),
+                      StreamProvider<List<OrderedProducts>?>.value(
+                      value:FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid).getOrdersItem,
+                      initialData: null,
+                      child: OrderedItemTiles()),
+                      
+                      ],
+                    ),
+                  
+                ),
+              ],
+            ),
           ),
-        ),
     );
     
   }
 }
+class OrderedItemTiles extends StatefulWidget {
+  const OrderedItemTiles({super.key});
+
+  @override
+  State<OrderedItemTiles> createState() => _OrderedItemTilesState();
+}
+
+class _OrderedItemTilesState extends State<OrderedItemTiles> {
+  @override
+  Widget build(BuildContext context) {
+    final order= Provider.of<List<OrderedProducts>?>(context);
+    return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount:1, 
+      crossAxisSpacing:12,
+      mainAxisSpacing: 12,
+      mainAxisExtent:25,),
+      itemCount: (order==null)? 0: order.length,
+      itemBuilder: (_,index)
+      {
+        return OrderedProductTile(op:order?[index]);
+      }
+      
+    );
+  }
+}
+class OrderedProductTile extends StatelessWidget {
+  final OrderedProducts? op;
+  const OrderedProductTile({super.key, required this.op});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      //padding: EdgeInsets.all(10),
+      child: Row(
+        children: [
+          Text("${op?.qty} x"),
+          SizedBox(width:10),
+          ClipRRect(
+                borderRadius: const BorderRadius.only(topLeft:Radius.circular(3.0),topRight: Radius.circular(3.0) ),
+                child: Image.network("${op?.image}",
+                height:25,
+                width: 25,
+                fit:BoxFit.cover,)),
+          SizedBox(width:10),
+          Text(op!.name),
+        ],
+      ),
+    );
+  }
+}
+
 class CustomerModel extends StatelessWidget {
   const CustomerModel({super.key});
 
@@ -190,15 +240,4 @@ class CustomerModel extends StatelessWidget {
     return Text("${customer?.fn} ${customer?.ln}",style:const TextStyle(color:Colors.white,fontSize: 12,));
   }
 }
-class OrderModelValue extends StatelessWidget {
-  final String val;
-  const OrderModelValue({super.key,required this.val});
 
-  @override
-  Widget build(BuildContext context) {
-    final total = Provider.of<OrderModel?>(context);
-    double t=(total==null)?0:double.parse(total.total);
-    String loc=(total==null)?"":total.loc;
-    return Text((val=="total")?"P ${t.toStringAsFixed(2)}":loc,style:const TextStyle(color:Color.fromRGBO(20, 20, 20, 1),fontSize: 13,fontWeight: FontWeight.bold));
-  }
-}

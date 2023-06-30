@@ -112,7 +112,7 @@ class FetchOrderFromCustomer
     OrderModel? _orderListFromCartSnapShot(DocumentSnapshot snapshot)
   {
     
-      return OrderModel(snapshot.get('time'),snapshot.get('total'),snapshot.get('loc'));
+      return OrderModel(snapshot.get('time'),snapshot.get('total'),snapshot.get('loc'),snapshot.get('status'),snapshot.get('uid'));
   
   }
       //get order stream
@@ -135,4 +135,12 @@ class FetchOrderFromCustomer
     Stream<List<OrderedProducts>> get getOrdersItem{
         return order.doc(uid).collection("order").doc(orderId).collection("products").snapshots().map(_pendingOrderItemtListFromSnapShot);
       }
+
+      
+
+      Future updateOrderStatus(String status) async
+  {
+    return order.doc(uid).collection("order").doc(orderId).update({'status':"$status"});
+  }
+  
 }

@@ -11,7 +11,6 @@ import 'package:sweetncoloursadmin/prodauth/addcategory.dart';
 import 'package:sweetncoloursadmin/prodauth/addprod.dart';
 import 'package:sweetncoloursadmin/prodauth/addprodtocategory.dart';
 import 'package:sweetncoloursadmin/shared/loading.dart';
-import 'package:sweetncoloursadmin/vieworderdet.dart';
 
 import '../models/user.dart';
 import '../services/database.dart';
@@ -23,20 +22,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool showOrders=false;
-  String? order_id;
-  String? customer_id;
-  List<bool> showWidgets=[false,false,false,true];
+ 
+  List<bool> showWidgets=[false,false,false,false,false];
   // ignore: non_constant_identifier_names
   String? cat_title="All";
   String? selectedCAtegory="All";
   
-  void showOrderDetails()
-  {
-    setState(() {
-      showOrders=!showOrders;
-    });
-  }
+  
   void setCatTitle(String? cat)
   {
     setState(() {
@@ -44,15 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
       selectedCAtegory=cat;
     });
   }
- void getOrderDetails(String? order_id, String?  customer_id)
- {
-    setState(() {
-      this.order_id=order_id;
-      this.customer_id=customer_id;
-      print(this.order_id);
-      print(this.customer_id);
-    });
- }
+ 
   void showPanel(int index)
   {
           setState(() {
@@ -104,7 +88,7 @@ class _MyHomePageState extends State<MyHomePage> {
             UserData? userData=snapshot.data;
             if(userData?.accType=="admin")
             {
-              return (showOrders==true)?OrderDetials(showOrderDetails:showOrderDetails,order_id: this.order_id,customer_id: this.customer_id,):Scaffold(
+              return Scaffold(
           //Color.fromRGBO(215,15,100, 1)
            backgroundColor:Colors.white,
           drawer:const MyDrawer(),
@@ -145,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                       }else if(index==2)
                       {
-
+                          showPanel(4);
                       }else if(index==3)
                       {
 
@@ -160,7 +144,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: (showWidgets[2]==true)?StreamProvider<List<Orders>?>.value(
                   value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
                   initialData: null,
-                  child: OrdersPanel(showOrderDetails: showOrderDetails, getOrderDetails:getOrderDetails)):Column(
+                  child: OrdersPanel(status:"pending")): (showWidgets[4]==true)?StreamProvider<List<Orders>?>.value(
+                  value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
+                  initialData: null,
+                  child: OrdersPanel(status:"approved")):Column(
                   children: [
                     const SizedBox(height: 10,),
                     StreamProvider<List<CategoryModel>?>.value(

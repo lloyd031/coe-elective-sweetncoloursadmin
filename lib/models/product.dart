@@ -36,7 +36,9 @@ class OrderModel{
   final String  time;
   final String total;
   final String loc;
-  OrderModel(this.time,this.total,this.loc);
+  final String status;
+  final String uid;
+  OrderModel(this.time,this.total,this.loc,this.status,this.uid);
 }
 /**
  * 
