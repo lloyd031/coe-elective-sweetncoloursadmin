@@ -142,10 +142,10 @@ class _MyHomePageState extends State<MyHomePage> {
               
               Container(
                 child: (showWidgets[2]==true)?StreamProvider<List<Orders>?>.value(
-                  value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
+                  value:FetchOrderFromCustomer(null,null,"pending").getOrdersFromCustomer,
                   initialData: null,
                   child: OrdersPanel(status:"pending")): (showWidgets[4]==true)?StreamProvider<List<Orders>?>.value(
-                  value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
+                  value:FetchOrderFromCustomer(null,null,"approved").getOrdersFromCustomer,
                   initialData: null,
                   child: OrdersPanel(status:"approved")):Column(
                   children: [

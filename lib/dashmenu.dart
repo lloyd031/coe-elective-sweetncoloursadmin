@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sweetncoloursadmin/models/product.dart';
 import 'package:sweetncoloursadmin/models/user.dart';
-import 'package:sweetncoloursadmin/pendingoreder.dart';
+import 'package:sweetncoloursadmin/ordercount.dart';
 import 'package:sweetncoloursadmin/services/database.dart';
 
 class DashMenu extends StatefulWidget {
@@ -17,6 +17,7 @@ class DashMenu extends StatefulWidget {
 class _DashMenuState extends State<DashMenu> {
   
   final buttonLabel=["Products","Pending Orders","Orders","Analytics"];
+  final status=["","pending","approved",""];
   final buttonIcon=[FontAwesomeIcons.cakeCandles,Icons.shopping_bag,FontAwesomeIcons.boxArchive,FontAwesomeIcons.chartLine];
   final  buttonColor=[
     [
@@ -74,9 +75,9 @@ class _DashMenuState extends State<DashMenu> {
                   value:DatabaseService(user?.uid, user?.email,"All").getProducts,
                   initialData: null,
                   child:const ProductsCount()): StreamProvider<List<Orders>?>.value(
-                  value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
+                  value:FetchOrderFromCustomer(null,null,status[widget.index]).getOrdersFromCustomer,
                   initialData: null,
-                  child: PendingOrdersCount(darkFont:false)),
+                  child: OrdersCount(darkFont:false)),
             
               )
               //Text(buttonLabel[widget.index],style:TextStyle(color:Colors.white,fontSize: 14,fontWeight:FontWeight.bold)),

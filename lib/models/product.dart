@@ -28,9 +28,10 @@ class ProductFromCategoryModel{
 }
 class Orders
 {
+  final String? docId;
   final String? customerId;
   final String? orderId;
-  Orders(this.customerId,this.orderId);
+  Orders(this.customerId,this.orderId,this.docId);
 }
 class OrderModel{
   final String  time;

@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sweetncoloursadmin/models/product.dart';
 import 'package:sweetncoloursadmin/models/user.dart';
-import 'package:sweetncoloursadmin/pendingoreder.dart';
+import 'package:sweetncoloursadmin/ordercount.dart';
 import 'package:sweetncoloursadmin/services/database.dart';
 
 class OrdersPanel extends StatefulWidget {
@@ -15,7 +15,7 @@ class OrdersPanel extends StatefulWidget {
 }
 
 class _OrdersPanelState extends State<OrdersPanel> {
-
+   List<OrderModel?> ordercount=[];
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserObj?>(context);
@@ -29,7 +29,7 @@ class _OrdersPanelState extends State<OrdersPanel> {
                   Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text("PENDING ORDER LIST",style:TextStyle(color:Color.fromRGBO(30,30,50,1),fontSize: 16,fontWeight:FontWeight.bold)),
+                    Text("${(widget.status=="pending")?"PENDING":"APPROVED"} ORDER LIST",style:TextStyle(color:Color.fromRGBO(30,30,50,1),fontSize: 16,fontWeight:FontWeight.bold)),
                     SizedBox(width: 24,),
                     Container(
                       padding:EdgeInsets.all(6),
@@ -38,9 +38,9 @@ class _OrdersPanelState extends State<OrdersPanel> {
                         color:Color.fromRGBO(255, 234,246, 1),
                       ),
                       child: StreamProvider<List<Orders>?>.value(
-                  value:DatabaseService(user?.uid, user?.email,"").getPendingOrders,
+                  value:FetchOrderFromCustomer(null,null,widget.status).getOrdersFromCustomer,
                   initialData: null,
-                  child: PendingOrdersCount(darkFont:true))
+                  child: OrdersCount(darkFont:true))
                       )
                   ]
                 ),
@@ -49,9 +49,9 @@ class _OrdersPanelState extends State<OrdersPanel> {
                 children: [
                   for(int i=0; i<order.length; i++)
                   StreamProvider<OrderModel?>.value(
-                            value:FetchOrderFromCustomer(order[i].orderId,order[i].customerId).getOrders,
+                            value:FetchOrderFromCustomer(order[i].orderId,order[i].customerId,"").getOrders,
                             initialData: null,
-                            child:OrderTile(status:widget.status),),
+                            child:OrderTile(status:widget.status,orderdoc:order[i]),),
               
                 ],
               ),
@@ -65,9 +65,10 @@ class _OrdersPanelState extends State<OrdersPanel> {
     
   }
   class OrderTile extends StatefulWidget {
+    final Orders? orderdoc;
   final String status;
-  const OrderTile({super.key,required this.status});
-
+  const OrderTile({super.key,required this.status,required this.orderdoc});
+ 
   @override
   State<OrderTile> createState() => _OrderTileState();
 }
@@ -81,14 +82,17 @@ class _OrderTileState extends State<OrderTile> {
       onDoubleTap: ()async{
         if(widget.status=="pending")
         {
-          dynamic update=await FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid).updateOrderStatus("approved");
-        if(update == null)
+          dynamic update=await FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid,"").updateOrderStatus("approved");
+          dynamic updateOrderStatus=await FetchOrderFromCustomer("${widget.orderdoc?.docId}",order?.uid,"").updateOrderStatusInAdmin("approved");
+          
+          
+        if(update == null && updateOrderStatus==null)
         {
           print("approved");
         }
         }
       },
-      child:(order?.status!="${widget.status}")?Text(""): SizedBox(
+      child: SizedBox(
             width:double.maxFinite,
             child: Column(
               mainAxisSize:MainAxisSize.min,
@@ -163,7 +167,7 @@ class _OrderTileState extends State<OrderTile> {
                         ),*/
                         const Divider(),
                       StreamProvider<List<OrderedProducts>?>.value(
-                      value:FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid).getOrdersItem,
+                      value:FetchOrderFromCustomer("${order?.uid}${order?.time}",order?.uid,"").getOrdersItem,
                       initialData: null,
                       child: OrderedItemTiles()),
                       

@@ -3,9 +3,9 @@ import 'package:provider/provider.dart';
 
 import 'models/product.dart';
 
-class PendingOrdersCount extends StatelessWidget {
+class OrdersCount extends StatelessWidget {
   final bool darkFont;
-  const PendingOrdersCount({super.key, required this.darkFont});
+  const OrdersCount({super.key, required this.darkFont});
 
   @override
   Widget build(BuildContext context) {

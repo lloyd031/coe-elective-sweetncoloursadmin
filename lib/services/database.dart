@@ -89,25 +89,15 @@ class DatabaseService
   }
 
 
-  List<Orders> _pendingOrderctListFromSnapShot(QuerySnapshot snapshot)
-  {
-    return snapshot.docs.map((doc){
-      
-      return Orders(doc.get('customer_id'),doc.get('order_id'));
-    }).toList();
-  }
-    //get pendiing orders
-    final CollectionReference orders =FirebaseFirestore.instance.collection('ordertoadmin');
-    Stream<List<Orders>> get getPendingOrders{
-        return orders.snapshots().map(_pendingOrderctListFromSnapShot);
-      }
+  
   
 }
 class FetchOrderFromCustomer
 {
+  final String? status;
   final String? uid;
   final String? orderId;
-  FetchOrderFromCustomer(this.orderId,this.uid);
+  FetchOrderFromCustomer(this.orderId,this.uid,this.status);
   final CollectionReference order =FirebaseFirestore.instance.collection('order');
     OrderModel? _orderListFromCartSnapShot(DocumentSnapshot snapshot)
   {
@@ -120,8 +110,20 @@ class FetchOrderFromCustomer
   Stream<OrderModel?> get getOrders{
     return order.doc(uid).collection("order").doc(orderId).snapshots().map(_orderListFromCartSnapShot);
   }
-
-
+  
+ 
+  List<Orders> _OrderctListFromSnapShot(QuerySnapshot snapshot)
+  {
+    return snapshot.docs.map((doc){
+      
+      return Orders(doc.get('customer_id'),doc.get('order_id'),doc.id);
+    }).toList();
+  }
+    //get pendiing orders
+    final CollectionReference orders =FirebaseFirestore.instance.collection('ordertoadmin');
+    Stream<List<Orders>> get getOrdersFromCustomer{
+        return orders.where("status",isEqualTo:status).snapshots().map(_OrderctListFromSnapShot);
+      }
   
  List<OrderedProducts> _pendingOrderItemtListFromSnapShot(QuerySnapshot snapshot)
   {
@@ -142,5 +144,12 @@ class FetchOrderFromCustomer
   {
     return order.doc(uid).collection("order").doc(orderId).update({'status':"$status"});
   }
+  Future updateOrderStatusInAdmin(String status) async
+  {
+    return orders.doc(orderId).update({'status':"$status"});
+  }
+  
+  
+  
   
 }
