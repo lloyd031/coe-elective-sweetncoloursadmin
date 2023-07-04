@@ -15,7 +15,7 @@ class ProductTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserObj?>(context);
     return  Container(
-          decoration:  BoxDecoration(
+          decoration:  const BoxDecoration(
             
             borderRadius: BorderRadius.all(Radius.circular(3.0)),
             boxShadow: [
