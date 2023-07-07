@@ -235,7 +235,7 @@ class _OrderedItemProductTilesState extends State<OrderedItemProductTiles> {
       subtitle:const Text("tap to view details") ,
       trailing: ClipOval(
                   child: Container(
-                    color:Color.fromRGBO(254,71,228,1),
+                    color:const Color.fromRGBO(254,71,228,1),
                     width:20,
                     height:20,
                     child: Center(

@@ -51,16 +51,7 @@ class MyDrawer extends StatelessWidget {
                 title:const Text('My Profile'),
                 onTap: (){},
               ),
-              ListTile(
-                leading:const Icon(Icons.shopping_cart),
-                title:const Text('My Cart'),
-                onTap: (){},
-              ),
-              ListTile(
-                leading:const Icon(Icons.shopping_bag),
-                title:const Text('My Oders'),
-                onTap: (){},
-              ),
+              
               const Divider(),
               ListTile(
                 leading:const Icon(Icons.star),

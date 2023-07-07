@@ -16,9 +16,9 @@ class DashMenu extends StatefulWidget {
 
 class _DashMenuState extends State<DashMenu> {
   
-  final buttonLabel=["Products","Pending Orders","Orders","Deliveries"];
+  final buttonLabel=["Products","Pending Orders","Orders","Analytics"];
   final status=["","pending","approved",""];
-  final buttonIcon=[FontAwesomeIcons.cakeCandles,Icons.shopping_bag,FontAwesomeIcons.boxArchive,FontAwesomeIcons.truck];
+  final buttonIcon=[FontAwesomeIcons.cakeCandles,Icons.shopping_bag,FontAwesomeIcons.boxArchive,FontAwesomeIcons.chartLine];
   final  buttonColor=[
     [
       const Color.fromRGBO(132,90,254,1),
